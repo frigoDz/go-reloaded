@@ -33,30 +33,37 @@ func main() {
 		res.WriteString(dataedit)
 		res.Close()
 }
-func tokenize(str string) []string {
-		var slice []string
+func fixQuotes(str string) string {
+		var slice string
 		i := 0
-		positon := 1
+		position := 0
 		var open int
 		clos := 0
 		trimed := ""
-		for i < len(str) -1 {
+		for i < len(str)  {
 				if str[i] == '\'' {
-						position++
+						if !(i > 0 && i < len(str)-1 &&
+  ((str[i-1] >= 'a' && str[i-1] <= 'z') || (str[i-1] >= 'A' && str[i-1] <= 'Z')) &&
+  ((str[i+1] >= 'a' && str[i+1] <= 'z') || (str[i+1] >= 'A' && str[i+1] <= 'Z'))) {
+							position++
+					}
 				}
 				if str[i] == '\'' && position % 2 != 0 {
-						open = i +1
-						slice = append(slice,str[clos:open])
+						slice += str[clos:i]
+						slice += "'"
+						open = i+1
 				}
-				if str[i] == '\'' && position % 2 == 0 {
+				if str[i] == '\'' && position % 2 == 0{
 						clos = i
 						trimed = strings.TrimSpace(str[open:clos])
-						slice = append(slice,trimed)
+						slice += trimed
+						slice += "'"
+						clos = i + 1
 				}
-				if i == len(str) -1 {
-						slice = append(slice ,str[clos:len(str)])
-				}
+				i++
 		}
+		slice += str[clos:]
+		return slice
 }
 
 func applyNumberConversions(words []string) {
@@ -66,7 +73,7 @@ func applyNumberConversions(words []string) {
 func applyCaseModifiers(words []string) []string {
 }
 
-func fixQuotes(str string) string {
+func tokenize(str string) string {
 }
 
 func fixPunctuation(str string) string {
