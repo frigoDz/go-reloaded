@@ -1,22 +1,23 @@
-package main
+pckage main
 
 import (
 		"os"
 		"strings"
 		"fmt"
+		"unicode"
 )
 func main() {
 		databyte,_ := os.ReadFile(os.Args[1])
 		dataedit := string(databyte)
-		if len(os.Args) > 3 {
+		if len(os.Args) < 3 {
 				fmt.Print("Too many arguments")
 				return
 		}
-		if len(os.Args) < 3 {
+		if len(os.Args) > 3 {
 				fmt.Print("Not enough arguments")
 				return
 		}
-		if len(datastr) == 0 {
+		if len(dataedit) == 0 {
 				return
 		}
 		if os.Args[2] == "go.mod" || os.Args[2] == "go.sum" {
@@ -24,63 +25,111 @@ func main() {
 		}
 		dataedit = fixQuotes(dataedit)
 		dataedit = fixPunctuation(dataedit)
-		words := tokenize(dataedit)
-		words = applyNumberConversions(words)
-		words = applyCaseModifiers(words)
-		words = FixArticle(words)
-		dataedit = joinWords(words)
+		dataedit = applyNumberConversions(dataedit)
+		dataedit = applyCaseModifiers(dataedit)
+		dataedit = FixArticle(dataedit)
 		res,_ := os.Create(os.Args[2])
 		res.WriteString(dataedit)
 		res.Close()
 }
 func fixQuotes(str string) string {
-		var slice string
+    var slice string
+    i := 0
+    position := 0
+    var open int
+    clos := 0
+    trimed := ""
+    var valid bool
+    for i < len(str) {
+        if str[i] == '\'' {
+            if !(i > 0 && i < len(str)-1 &&
+                unicode.IsLetter(rune(str[i-1])) && unicode.IsLetter(rune(str[i+1]))) {
+                position++
+                valid = true
+            } else {
+                valid = false
+            }
+        }
+        if str[i] == '\'' && position%2 != 0 && valid == true {
+            before := str[clos:i]
+			if len(before) > 0 && before[len(before)-1] != ' ' {
+    			slice += before + " "
+			} else {
+    			slice += before
+			}
+			slice += "'"
+            open = i + 1
+            valid = false
+        } else if str[i] == '\'' && position%2 == 0 && valid == true {
+            clos = i
+            trimed = strings.TrimSpace(str[open:clos])
+            slice += trimed
+            slice += "'"
+            clos = i + 1
+			if clos < len(str) && str[clos] != ' ' {
+    			slice += " "
+			}
+            valid = false
+        }
+        i++
+    }
+    slice += str[clos:]
+    return slice
+}
+func applyNumberConversions(str string) string{
+		result := ""
+		i:=0
+		for i < len(str) {
+				ch := str[i]
+				if 
+}
+
+
+func applyCaseModifiers(str string) string {
+}
+
+
+func fixPunctuation(str string) string {
+		slice := ""
+		for i := 0; i < len(str); i++ {
+				if IsPunctuation(rune(str[i])) {
+						slice = strings.TrimRight(slice, " ")
+						j := i
+						for j + 1 < len(str) && IsPunctuation(rune(str[j+1])) {
+								j++
+						}
+						slice += string(str[i:j+1])
+						if j < len(str)-1 && str[j+1] != ' ' {
+								slice += " "
+						}
+						i = j
+				} else {
+						slice += string(str[i])
+				}
+		}
+		return slice
+}
+func fixArticles(str string) string {
+		runes := []rune(str)
+		result := ""
 		i := 0
-		position := 0
-		var open int
-		clos := 0
-		trimed := ""
-		for i < len(str)  {
-				if str[i] == '\'' {
-						if !(i > 0 && i < len(str)-1 &&
-  ((str[i-1] >= 'a' && str[i-1] <= 'z') || (str[i-1] >= 'A' && str[i-1] <= 'Z')) &&
-  ((str[i+1] >= 'a' && str[i+1] <= 'z') || (str[i+1] >= 'A' && str[i+1] <= 'Z'))) {
-							position++
-					}
-				}
-				if str[i] == '\'' && position % 2 != 0 {
-						slice += str[clos:i]
-						slice += "'"
-						open = i+1
-				}
-				if str[i] == '\'' && position % 2 == 0{
-						clos = i
-						trimed = strings.TrimSpace(str[open:clos])
-						slice += trimed
-						slice += "'"
-						clos = i + 1
+		for i < len(runes) {
+				if runes[i] == 'a' || runes[i] == 'A' {
+						if (i == 0 || !isLetter(runes[i-1])) && (i == len(runes)-1 || !isLetter(runes[i+1])) {
+								j := i + 1
+								for j < len(runes) && (runes[j] == ' ' || isPunctuation(runes[j])) {
+										j++
+								}
+								if isVowelLetter(runes[j]) {
+										result += string(runes[i]) + "n"
+										continue
+								}
+						}
+						result += string(runes[i])
+				} else {
+						result += string(runes[i])
 				}
 				i++
 		}
-		slice += str[clos:]
-		return slice
-}
-
-func applyNumberConversions(words []string) {
-}
-
-
-func applyCaseModifiers(words []string) []string {
-}
-
-func tokenize(str string) string {
-}
-
-func fixPunctuation(str string) string {
-}
-
-func fixArticles(words []string) []string{
-}
-
-func joinWords(words []string) string {
+		return result
 }
