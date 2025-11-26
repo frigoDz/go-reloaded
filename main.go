@@ -1,4 +1,4 @@
-pckage main
+package main
 
 import (
 		"os"
@@ -26,8 +26,8 @@ func main() {
 		dataedit = fixQuotes(dataedit)
 		dataedit = fixPunctuation(dataedit)
 		dataedit = applyNumberConversions(dataedit)
-		dataedit = applyCaseModifiers(dataedit)
-		dataedit = FixArticle(dataedit)
+//		dataedit = applyCaseModifiers(dataedit)
+		dataedit = fixArticles(dataedit)
 		res,_ := os.Create(os.Args[2])
 		res.WriteString(dataedit)
 		res.Close()
@@ -76,17 +76,34 @@ func fixQuotes(str string) string {
     slice += str[clos:]
     return slice
 }
-func applyNumberConversions(str string) string{
-		result := ""
-		i:=0
-		for i < len(str) {
-				ch := str[i]
-				if 
+func applyNumberConversions(sentence string) string{
+	words := strings.Split(sentence, " ")
+	for i := 0; i < len(words); i++ {
+		w := words[i]
+		if strings.HasPrefix(w, "(") && strings.HasSuffix(w, ")") {
+			inner := strings.TrimSpace(w[1 : len(w)-1])
+			if inner == "hex" && i > 0 {
+				words[i-1] = convertHex(words[i-1])
+				words[i] = ""
+			}
+			if inner == "bin" && i > 0 {
+				words[i-1] = convertBin(words[i-1])
+				words[i] = ""
+			}
+		}
+	}
+	result := []string{}
+	for _, w := range words {
+		if w != "" {
+			result = append(result, w)
+		}
+	}
+	return strings.Join(result, " ")
 }
 
-
+/*
 func applyCaseModifiers(str string) string {
-}
+}*/
 
 
 func fixPunctuation(str string) string {
@@ -115,13 +132,14 @@ func fixArticles(str string) string {
 		i := 0
 		for i < len(runes) {
 				if runes[i] == 'a' || runes[i] == 'A' {
-						if (i == 0 || !isLetter(runes[i-1])) && (i == len(runes)-1 || !isLetter(runes[i+1])) {
+						if (i == 0 || !isLetterOrDigit(runes[i-1])) && (i == len(runes)-1 || !isLetterOrDigit(runes[i+1])) {
 								j := i + 1
-								for j < len(runes) && (runes[j] == ' ' || isPunctuation(runes[j])) {
+								for j < len(runes) && (runes[j] == ' ' || IsPunctuation(runes[j])) {
 										j++
 								}
-								if isVowelLetter(runes[j]) {
+								if IsVowelLetter(runes[j]) {
 										result += string(runes[i]) + "n"
+										i++
 										continue
 								}
 						}
