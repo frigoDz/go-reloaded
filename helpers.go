@@ -34,4 +34,3 @@ func IsVowelLetter(c rune) bool {
 		}
 		return false
 }
-
