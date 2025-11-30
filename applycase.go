@@ -1,101 +1,108 @@
 package main
 
 import (
-		"strings"
-		"unicode"
-		"strconv"
+	"strconv"
+	"strings"
+	"unicode"
 )
 
 func Applycase(str string) string {
-	var strc string
-	var res string
-	start := -1
-	var endd int
-	var lastword string
-	words := strings.Fields(str)
-	for i, ch := range str {
-		if ch == '(' {
-			start = i
+	result := ""
+	i := 0
+
+	for i < len(str) {
+		start := Firstbyte(str[i:], '(')
+		if start == -1 {
+			result += str[i:]
+			break
 		}
-		if start != -1 && ch == ')' {
-			res += strings.TrimSpace(str[:start])
-			strc = strings.TrimSpace(str[start+1:i])
-			var num int
-			if strings.Contains(strc, ",") {
-				parts := strings.Split(strc, ",")
-				if len(parts) == 2 {
-					strc = strings.TrimSpace(parts[0])
-					num, _ = strconv.Atoi(strings.TrimSpace(parts[1]))
+		start += i
+		end := Firstbyte(str[start:], ')')
+		if end == -1 {
+			result += str[i : start+1]
+			i = start + 1
+			continue
+		}
+		end += start
+		command := strings.TrimSpace(str[start+1 : end])
+		var cmd string
+		var num int
+		validCommand := false
+
+		if strings.Contains(command, ",") {
+			parts := strings.Split(command, ",")
+			if len(parts) == 2 {
+				cmd = strings.TrimSpace(parts[0])
+				numStr := strings.TrimSpace(parts[1])
+				var err error
+				num, err = strconv.Atoi(numStr)
+				if err == nil && (cmd == "low" || cmd == "up" || cmd == "cap") {
+					validCommand = true
 				}
 			}
-			lastword = foundword(res)
-			switch strc {
-			case "low":
-				if num == 0 {
-					lastword = strings.ToLower(lastword)
-				} else {
-					for j := len(words) - num; j < len(words); j++ {
-						words[j] = strings.ToLower(words[j])
-					}
-				}
-			case "up":
-				if num == 0 {
-					lastword = strings.ToUpper(lastword)
-				} else {
-					for j := len(words) - num; j < len(words); j++ {
-						words[j] = strings.ToUpper(words[j])
-					}
-				}
-			case "cap":
-				if num == 0 {
-					lastword = Capitalize(lastword)
-				} else {
-					for j := len(words) - num; j < len(words); j++ {
-						words[j] = Capitalize(words[j])
-					}
-				}
-			default:
-				lastword += strc
+		} else {
+			cmd = command
+			num = 1
+			if cmd == "low" || cmd == "up" || cmd == "cap" {
+				validCommand = true
 			}
-			res += lastword
-			start = -1
+		}
+		if !validCommand {
+			result += str[i : start+1]
+			i = start + 1
+			continue
+		}
+		textBefore := str[i:start]
+		allText := result + textBefore
+		words := strings.Fields(allText)
+		if len(words) >= num {
+			for j := len(words) - num; j < len(words); j++ {
+				switch cmd {
+				case "low":
+					words[j] = strings.ToLower(words[j])
+				case "up":
+					words[j] = strings.ToUpper(words[j])
+				case "cap":
+					words[j] = Capitalize(words[j])
+				}
+			}
+			result = strings.Join(words, " ")
+		} else {
+			result += textBefore
+		}
+		i = end + 1
+		if i < len(str) && str[i] == ' ' {
+			i++
+			if i < len(str) {
+				result += " "
+			}
 		}
 	}
-	res += strings.Join(words, " ")[endd+1:]
-	return res
+	return result
 }
 
-func foundword(str string) string {
-    res := ""
-    for i := len(str)-1; i >= 0; i-- {
-        if str[i] == ' ' {
-            break
-        } 
-        res += string(str[i])
-    }
-    res = reversstr(res)
-    return res
-}
-func reversstr(str string) string {
-    res := ""
-    for i := len(str)-1 ; i >= 0; i-- {
-        res += string(str[i])
-    }
-    return res
-}
-func Capitalize (str string) string {
-		str = strings.ToLower(str)
-		res := ""
-		i := 0 
-		for i < len(str) {
-				if unicode.IsLetter(rune(str[i])) {
-						res += strings.ToUpper(string(str[i]))
-						i++ 
-						break
-				}
-				res += string(str[i])
-				i++
+func Firstbyte(str string, targ rune) int {
+	for i := 0; i < len(str); i++ {
+		if rune(str[i]) == targ {
+			return i
 		}
-		res += str[i:]
-		return res
+	}
+	return -1
+}
+
+func Capitalize(str string) string {
+	str = strings.ToLower(str)
+	res := ""
+	i := 0
+	for i < len(str) {
+		if unicode.IsLetter(rune(str[i])) {
+			res += strings.ToUpper(string(str[i]))
+			i++
+			break
+		}
+		res += string(str[i])
+		i++
+	}
+	res += str[i:]
+	return res
 }
