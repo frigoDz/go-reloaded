@@ -18,9 +18,9 @@ func Applycase(str string) string {
 		}
 		start += i
 		if start > 0 && runes[start-1] != ' ' && runes[start-1] != '\t' && runes[start-1] != '\n' {
-				result += string(runes[i:start+1])
-				i = start + 1
-				continue
+			result += string(runes[i : start+1])
+			i = start + 1
+			continue
 		}
 		end := Firstbyte(string(runes[start:]), ')')
 		if end == -1 {
@@ -30,9 +30,9 @@ func Applycase(str string) string {
 		}
 		end += start
 		if end < len(runes)-1 && runes[end+1] != ' ' && runes[end+1] != '\t' && runes[end+1] != '\n' {
-				result += string(runes[i:start+1])
-				i = start + 1
-				continue
+			result += string(runes[i : start+1])
+			i = start + 1
+			continue
 		}
 		command := strings.TrimSpace(string(runes[start+1 : end]))
 		var cmd string
@@ -92,7 +92,7 @@ func Applycase(str string) string {
 
 func Firstbyte(str string, targ rune) int {
 	runes := []rune(str)
-	for i,ch := range runes {
+	for i, ch := range runes {
 		if ch == targ {
 			return i
 		}
