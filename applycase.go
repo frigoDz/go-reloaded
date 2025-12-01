@@ -7,28 +7,37 @@ import (
 )
 
 func Applycase(str string) string {
+	runes := []rune(str)
 	result := ""
 	i := 0
-
-	for i < len(str) {
-		start := Firstbyte(str[i:], '(')
+	for i < len(runes) {
+		start := Firstbyte(string(runes[i:]), '(')
 		if start == -1 {
-			result += str[i:]
+			result += string(runes[i:])
 			break
 		}
 		start += i
-		end := Firstbyte(str[start:], ')')
+		if start > 0 && runes[start-1] != ' ' && runes[start-1] != '\t' && runes[start-1] != '\n' {
+				result += string(runes[i:start+1])
+				i = start + 1
+				continue
+		}
+		end := Firstbyte(string(runes[start:]), ')')
 		if end == -1 {
-			result += str[i : start+1]
+			result += string(runes[i : start+1])
 			i = start + 1
 			continue
 		}
 		end += start
-		command := strings.TrimSpace(str[start+1 : end])
+		if end < len(runes)-1 && runes[end+1] != ' ' && runes[end+1] != '\t' && runes[end+1] != '\n' {
+				result += string(runes[i:start+1])
+				i = start + 1
+				continue
+		}
+		command := strings.TrimSpace(string(runes[start+1 : end]))
 		var cmd string
 		var num int
 		validCommand := false
-
 		if strings.Contains(command, ",") {
 			parts := strings.Split(command, ",")
 			if len(parts) == 2 {
@@ -48,11 +57,11 @@ func Applycase(str string) string {
 			}
 		}
 		if !validCommand {
-			result += str[i : start+1]
+			result += string(runes[i : start+1])
 			i = start + 1
 			continue
 		}
-		textBefore := str[i:start]
+		textBefore := string(runes[i:start])
 		allText := result + textBefore
 		words := strings.Fields(allText)
 		if len(words) >= num {
@@ -71,9 +80,9 @@ func Applycase(str string) string {
 			result += textBefore
 		}
 		i = end + 1
-		if i < len(str) && str[i] == ' ' {
+		if i < len(runes) && runes[i] == ' ' {
 			i++
-			if i < len(str) {
+			if i < len(runes) {
 				result += " "
 			}
 		}
@@ -82,8 +91,9 @@ func Applycase(str string) string {
 }
 
 func Firstbyte(str string, targ rune) int {
-	for i := 0; i < len(str); i++ {
-		if rune(str[i]) == targ {
+	runes := []rune(str)
+	for i,ch := range runes {
+		if ch == targ {
 			return i
 		}
 	}
@@ -91,18 +101,19 @@ func Firstbyte(str string, targ rune) int {
 }
 
 func Capitalize(str string) string {
-	str = strings.ToLower(str)
+	runes := []rune(str)
+	runes = []rune(strings.ToLower(string(runes)))
 	res := ""
 	i := 0
-	for i < len(str) {
-		if unicode.IsLetter(rune(str[i])) {
-			res += strings.ToUpper(string(str[i]))
+	for i < len(runes) {
+		if unicode.IsLetter(runes[i]) {
+			res += strings.ToUpper(string(runes[i]))
 			i++
 			break
 		}
-		res += string(str[i])
+		res += string(runes[i])
 		i++
 	}
-	res += str[i:]
+	res += string(runes[i:])
 	return res
 }

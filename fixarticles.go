@@ -11,7 +11,7 @@ func fixArticles(str string) string {
 				for j < len(runes) && (runes[j] == ' ' || IsPunctuation(runes[j])) {
 					j++
 				}
-				if IsVowelLetter(runes[j]) {
+				if IsVowelLetter(runes[j]) || runes[j] == 'h' || runes[j] == 'H' {
 					result += string(runes[i]) + "n"
 					i++
 					continue
