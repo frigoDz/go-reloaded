@@ -6,7 +6,11 @@ import (
 )
 
 func main() {
-	databyte, _ := os.ReadFile(os.Args[1])
+	databyte, err := os.ReadFile(os.Args[1])
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
 	dataedit := string(databyte)
 	if len(os.Args) < 3 {
 		fmt.Print("Not enough arguments")
@@ -17,9 +21,6 @@ func main() {
 		return
 	}
 	if len(dataedit) == 0 {
-		return
-	}
-	if os.Args[2] == "go.mod" || os.Args[2] == "go.sum" {
 		return
 	}
 	dataedit = fixArticles(dataedit)
