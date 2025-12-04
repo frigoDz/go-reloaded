@@ -24,10 +24,10 @@ func main() {
 		return
 	}
 	dataedit = applyNumberConversions(dataedit)
-	dataedit = fixQuotes(dataedit)
-	dataedit = fixPunctuation(dataedit)
 	dataedit = Applycase(dataedit)
 	dataedit = fixArticles(dataedit)
+	dataedit = fixQuotes(dataedit)
+	dataedit = fixPunctuation(dataedit)
 	res, errr := os.Create(os.Args[2])
 	if errr != nil {
 		fmt.Print(errr)
