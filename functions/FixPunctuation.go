@@ -1,8 +1,8 @@
-package main
+package functions
 
 import "strings"
 
-func fixPunctuation(str string) string {
+func FixPunctuation(str string) string {
 	runes := []rune(str)
 	slice := ""
 	for i := 0; i < len(runes); i++ {

@@ -1,6 +1,6 @@
-package main
+package functions
 
-func fixArticles(str string) string {
+func FixArticles(str string) string {
 	runes := []rune(str)
 	result := ""
 	i := 0

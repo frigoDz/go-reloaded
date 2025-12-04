@@ -1,11 +1,11 @@
-package main
+package functions
 
 import (
 	"strconv"
 	"strings"
 )
 
-func applyNumberConversions(str string) string {
+func ApplyConvbase(str string) string {
 	words := strings.Fields(str)
 	i := 0
 	result := []string{}

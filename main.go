@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-reloaded/functions"
 	"os"
 )
 
@@ -23,11 +24,11 @@ func main() {
 	if len(dataedit) == 0 {
 		return
 	}
-	dataedit = applyNumberConversions(dataedit)
-	dataedit = Applycase(dataedit)
-	dataedit = fixArticles(dataedit)
-	dataedit = fixQuotes(dataedit)
-	dataedit = fixPunctuation(dataedit)
+	dataedit = functions.ApplyConvbase(dataedit)
+	dataedit = functions.Applycase(dataedit)
+	dataedit = functions.FixArticles(dataedit)
+	dataedit = functions.FixQuotes(dataedit)
+	dataedit = functions.FixPunctuation(dataedit)
 	res, errr := os.Create(os.Args[2])
 	if errr != nil {
 		fmt.Print(errr)

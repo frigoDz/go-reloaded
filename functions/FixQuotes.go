@@ -1,8 +1,8 @@
-package main
+package functions
 
 import "unicode"
 
-func fixQuotes(str string) string {
+func FixQuotes(str string) string {
 	runes := []rune(str)
 	var slice string
 	i := 0
