@@ -27,8 +27,8 @@ func fixQuotes(str string) string {
 			} else {
 				slice += string(before)
 			}
-			open = i + 1 
-			clos = i 
+			open = i + 1
+			clos = i
 			valid = false
 		} else if runes[i] == '\'' && position%2 == 0 && valid == true {
 			clos = i
