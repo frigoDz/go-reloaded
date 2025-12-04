@@ -23,15 +23,15 @@ func main() {
 	if len(dataedit) == 0 {
 		return
 	}
-	dataedit = fixArticles(dataedit)
+	dataedit = applyNumberConversions(dataedit)
 	dataedit = fixQuotes(dataedit)
 	dataedit = fixPunctuation(dataedit)
-	dataedit = applyNumberConversions(dataedit)
 	dataedit = Applycase(dataedit)
+	dataedit = fixArticles(dataedit)
 	res, errr := os.Create(os.Args[2])
 	if errr != nil {
-			fmt.Print(errr)
-			return
+		fmt.Print(errr)
+		return
 	}
 	res.WriteString(dataedit)
 	res.Close()

@@ -12,9 +12,15 @@ func fixArticles(str string) string {
 					j++
 				}
 				if IsVowelLetter(runes[j]) || runes[j] == 'h' || runes[j] == 'H' {
-					result += string(runes[i]) + "n"
-					i++
-					continue
+					if runes[i] == 'a' {
+						result += string(runes[i]) + "n"
+						i++
+						continue
+					} else if runes[i] == 'A' {
+						result += string(runes[i]) + "N"
+						i++
+						continue
+					}
 				}
 			}
 			result += string(runes[i])

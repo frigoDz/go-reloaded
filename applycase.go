@@ -22,27 +22,47 @@ func Applycase(str string) string {
 			i = start + 1
 			continue
 		}
-		end := Firstbyte(string(runes[start:]), ')')
+		end := Matchp(runes, start)
 		if end == -1 {
 			result += string(runes[i : start+1])
 			i = start + 1
 			continue
 		}
-		end += start
 		if end < len(runes)-1 && runes[end+1] != ' ' && runes[end+1] != '\t' && runes[end+1] != '\n' {
 			result += string(runes[i : start+1])
 			i = start + 1
 			continue
 		}
-		command := strings.TrimSpace(string(runes[start+1 : end]))
+		rawcommand := string(runes[start+1 : end])
+		command := strings.TrimSpace(rawcommand)
+		if rawcommand != command {
+			result += string(runes[i : start+1])
+			i = start + 1
+			continue
+		}
+		if strings.ContainsAny(command, "()") {
+			result += string(runes[i : start+1])
+			i = start + 1
+			continue
+		}
 		var cmd string
 		var num int
 		validCommand := false
 		if strings.Contains(command, ",") {
-			parts := strings.Split(command, ",")
+			if !strings.Contains(command, ", ") || strings.Contains(command, ",  ") {
+				result += string(runes[i : start+1])
+				i = start + 1
+				continue
+			}
+			parts := strings.Split(command, ", ")
 			if len(parts) == 2 {
-				cmd = strings.TrimSpace(parts[0])
-				numStr := strings.TrimSpace(parts[1])
+				cmd = parts[0]
+				numStr := parts[1]
+				if strings.TrimSpace(cmd) != cmd || strings.TrimSpace(numStr) != numStr {
+					result += string(runes[i : start+1])
+					i = start + 1
+					continue
+				}
 				var err error
 				num, err = strconv.Atoi(numStr)
 				if err == nil && (cmd == "low" || cmd == "up" || cmd == "cap") {
@@ -64,8 +84,12 @@ func Applycase(str string) string {
 		textBefore := string(runes[i:start])
 		allText := result + textBefore
 		words := strings.Fields(allText)
-		if len(words) >= num {
-			for j := len(words) - num; j < len(words); j++ {
+		if len(words) > 0 {
+			startIdx := len(words) - num
+			if startIdx < 0 {
+				startIdx = 0
+			}
+			for j := startIdx; j < len(words); j++ {
 				switch cmd {
 				case "low":
 					words[j] = strings.ToLower(words[j])
@@ -116,4 +140,18 @@ func Capitalize(str string) string {
 	}
 	res += string(runes[i:])
 	return res
+}
+func Matchp(runes []rune, start int) int {
+	count := 1
+	for i := start + 1; i < len(runes); i++ {
+		if runes[i] == '(' {
+			count++
+		} else if runes[i] == ')' {
+			count--
+			if count == 0 {
+				return i
+			}
+		}
+	}
+	return -1
 }

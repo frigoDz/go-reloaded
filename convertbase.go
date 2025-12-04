@@ -12,11 +12,13 @@ func applyNumberConversions(str string) string {
 
 	for i < len(words) {
 		word := words[i]
+		trimed := strings.TrimRight(word, ".,!?;:")
 		wr := []rune(word)
-		punctuation := string(wr[len(wr):])
-		if strings.HasPrefix(word, "(") && strings.HasSuffix(word, ")") {
-			flag := string(wr[1 : len(wr)-1])
-			if len(result) > 0 && (flag == "hex" || flag == "bin") && word == string(wr[:len(wr)]) {
+		tr := []rune(trimed)
+		punctuation := string(wr[len(tr):])
+		if strings.HasPrefix(trimed, "(") && strings.HasSuffix(trimed, ")") {
+			flag := string(wr[1 : len(tr)-1])
+			if len(result) > 0 && (flag == "hex" || flag == "bin") && trimed == string(wr[:len(tr)]) {
 				lastIdx := len(result) - 1
 				if flag == "hex" {
 					result[lastIdx] = convertHex(result[lastIdx])

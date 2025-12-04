@@ -27,14 +27,12 @@ func fixQuotes(str string) string {
 			} else {
 				slice += string(before)
 			}
-			slice += "'"
 			open = i + 1
 			valid = false
 		} else if runes[i] == '\'' && position%2 == 0 && valid == true {
 			clos = i
 			trimed, newline := Trim(string(runes[open:clos]))
-			slice += trimed
-			slice += "'"
+			slice += "'" + trimed + "'"
 			if newline {
 				slice += "\n"
 			}
