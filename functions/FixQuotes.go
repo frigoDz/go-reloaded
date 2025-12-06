@@ -1,6 +1,9 @@
 package functions
 
-import "unicode"
+import (
+	"strings"
+	"unicode"
+)
 
 func FixQuotes(str string) string {
 	runes := []rune(str)
@@ -28,17 +31,26 @@ func FixQuotes(str string) string {
 				slice += string(before)
 			}
 			open = i + 1
-			clos = i
+			clos = i + 1
 			valid = false
 		} else if runes[i] == '\'' && position%2 == 0 && valid == true {
 			clos = i
-			trimed, newline := Trim(string(runes[open:clos]))
+			newline := foundNl(string(runes[open:clos]))
+			trimed := strings.TrimSpace(string(runes[open:clos]))
 			slice += "'" + trimed + "'"
 			if newline {
 				slice += "\n"
 			}
 			clos = i + 1
-			if clos < len(runes) && runes[clos] != ' ' {
+			if clos < len(runes) && (runes[clos] == ' ' || runes[clos] == '\t') {
+				clos++
+			}
+			if newline && clos < len(runes) && runes[clos] == '\n' {
+				clos++
+				for clos < len(runes) && (runes[clos] == ' ' || runes[clos] == '\t') {
+					clos++
+				}
+			} else if !newline && clos < len(runes) && runes[clos] != ' ' && runes[clos] != '\n' {
 				slice += " "
 			}
 			valid = false
@@ -49,34 +61,12 @@ func FixQuotes(str string) string {
 	return slice
 }
 
-func Trim(str string) (string, bool) {
-	runes := []rune(str)
-	strv2 := ""
-	start := false
-	bol := false
-	for _, ch := range runes {
-		if ch != '\v' && ch != '\n' && ch != ' ' && ch != '\t' && ch != '\r' && ch != '\f' {
-			start = true
+func foundNl(str string) bool {
+	res := false
+	for _, ch := range str {
+		if ch == '\n' {
+			res = true
 		}
-		if !start && (ch == '\v' || ch == '\n' || ch == ' ' || ch == '\t' || ch == '\r' || ch == '\f') {
-			continue
-		}
-		strv2 += string(ch)
 	}
-	result := ""
-	start2 := false
-	for i := len(strv2) - 1; i >= 0; i-- {
-		ch := rune(strv2[i])
-		if ch != '\v' && ch != '\n' && ch != ' ' && ch != '\t' && ch != '\r' && ch != '\f' {
-			start2 = true
-		}
-		if !start2 && (ch == '\v' || ch == '\n' || ch == ' ' || ch == '\t' || ch == '\r' || ch == '\f') {
-			if ch == '\n' {
-				bol = true
-			}
-			continue
-		}
-		result = string(ch) + result
-	}
-	return result, bol
+	return res
 }

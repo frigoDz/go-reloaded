@@ -24,7 +24,6 @@ func main() {
 	if len(dataedit) == 0 {
 		return
 	}
-	dataedit = functions.ApplyConvbase(dataedit)
 	dataedit = functions.Applycase(dataedit)
 	dataedit = functions.FixArticles(dataedit)
 	dataedit = functions.FixQuotes(dataedit)
