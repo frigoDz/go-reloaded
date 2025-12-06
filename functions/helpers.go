@@ -1,8 +1,8 @@
 package functions
 
 import (
-		"unicode"
-		"strconv"
+	"strconv"
+	"unicode"
 )
 
 func IsPunctuation(c rune) bool {
