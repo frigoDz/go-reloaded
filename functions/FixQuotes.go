@@ -25,15 +25,14 @@ func FixQuotes(str string) string {
 		}
 		if runes[i] == '\'' && position%2 != 0 && valid == true {
 			before := runes[clos:i]
-			if len(before) > 0 && before[len(before)-1] != ' ' {
-				slice += string(before) + " "
-			} else {
-				slice += string(before)
-			}
+			slice += string(before)
 			open = i + 1
-			clos = i + 1
+			clos = i
 			valid = false
 		} else if runes[i] == '\'' && position%2 == 0 && valid == true {
+			if len(slice) > 0 && slice[len(slice)-1] != ' ' && slice[len(slice)-1] != '\n' {
+        		slice += " "
+    		}
 			clos = i
 			newline := foundNl(string(runes[open:clos]))
 			trimed := strings.TrimSpace(string(runes[open:clos]))
@@ -41,7 +40,7 @@ func FixQuotes(str string) string {
 			if newline {
 				slice += "\n"
 			}
-			clos = i + 1
+			clos = i + 1 
 			if clos < len(runes) && (runes[clos] == ' ' || runes[clos] == '\t') {
 				clos++
 			}
