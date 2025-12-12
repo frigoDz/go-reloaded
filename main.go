@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"go-reloaded/functions"
 	"os"
+	"strings"
 )
 
 func main() {
+	if !(strings.HasSuffix(os.Args[2], ".txt")) {
+		fmt.Print("Incorrect file type")
+		return
+	}
 	databyte, err := os.ReadFile(os.Args[1])
 	if err != nil {
 		fmt.Print(err)
