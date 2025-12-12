@@ -40,6 +40,7 @@ func IsVowelLetter(c rune) bool {
 
 func convertHex(str string) string {
 	result := 0
+	maxint := 9223372036854775807
 	if IsHex(str) {
 		for i := 0; i < len(str); i++ {
 			ch := str[i]
@@ -51,6 +52,9 @@ func convertHex(str string) string {
 			} else if ch >= 'A' && ch <= 'F' {
 				value = int(ch - 'A' + 10)
 			}
+			if result > (maxint-value)/16 {
+				return str
+			}
 			result = result*16 + value
 		}
 	} else {
@@ -61,6 +65,7 @@ func convertHex(str string) string {
 
 func convertBin(str string) string {
 	result := 0
+	maxint := 9223372036854775807
 	if IsBin(str) {
 		for i := 0; i < len(str); i++ {
 			ch := str[i]
@@ -69,6 +74,9 @@ func convertBin(str string) string {
 				value = 0
 			} else {
 				value = 1
+			}
+			if result > (maxint-value)/2 {
+				return str
 			}
 			result = result*2 + value
 		}

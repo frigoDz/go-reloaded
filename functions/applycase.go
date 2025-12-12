@@ -7,6 +7,15 @@ import (
 )
 
 func Applycase(str string) string {
+	prevresult := ""
+	result := str
+	for result != prevresult {
+		prevresult = result
+		result = ApplycaseOl(result)
+	}
+	return result
+}
+func ApplycaseOl(str string) string {
 	runes := []rune(str)
 	result := ""
 	i := 0
