@@ -31,8 +31,8 @@ func main() {
 	}
 	dataedit = functions.Applycase(dataedit)
 	dataedit = functions.FixArticles(dataedit)
-	dataedit = functions.FixQuotes(dataedit)
 	dataedit = functions.FixPunctuation(dataedit)
+	dataedit = functions.FixQuotes(dataedit)
 	res, errr := os.Create(os.Args[2])
 	if errr != nil {
 		fmt.Print(errr)

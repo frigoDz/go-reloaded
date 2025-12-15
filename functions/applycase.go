@@ -3,7 +3,6 @@ package functions
 import (
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 func Applycase(str string) string {
@@ -71,11 +70,6 @@ func ApplycaseOl(str string) string {
 			if len(parts) == 2 {
 				cmd = parts[0]
 				numStr := parts[1]
-				if strings.TrimSpace(cmd) != cmd || strings.TrimSpace(numStr) != numStr {
-					result += string(runes[i : start+1])
-					i = start + 1
-					continue
-				}
 				var err error
 				num, err = strconv.Atoi(numStr)
 				if err == nil && (cmd == "low" || cmd == "up" || cmd == "cap") {
@@ -128,99 +122,5 @@ func ApplycaseOl(str string) string {
 			}
 		}
 	}
-	return result
-}
-
-func Firstbyte(str string, targ rune) int {
-	runes := []rune(str)
-	for i, ch := range runes {
-		if ch == targ {
-			return i
-		}
-	}
-	return -1
-}
-
-func Capitalize(str string) string {
-	runes := []rune(str)
-	runes = []rune(strings.ToLower(string(runes)))
-	res := ""
-	i := 0
-	for i < len(runes) {
-		if unicode.IsLetter(runes[i]) {
-			res += strings.ToUpper(string(runes[i]))
-			i++
-			break
-		}
-		res += string(runes[i])
-		i++
-	}
-	res += string(runes[i:])
-	return res
-}
-func Matchp(runes []rune, start int) int {
-	count := 1
-	for i := start + 1; i < len(runes); i++ {
-		if runes[i] == '(' {
-			count++
-		} else if runes[i] == ')' {
-			count--
-			if count == 0 {
-				return i
-			}
-		}
-	}
-	return -1
-}
-
-func splitWords(str string) []string {
-	words := []string{}
-	currentWord := ""
-	for _, ch := range str {
-		if ch == ' ' || ch == '\t' || ch == '\n' {
-			if currentWord != "" {
-				words = append(words, currentWord)
-				currentWord = ""
-			}
-		} else {
-			currentWord += string(ch)
-		}
-	}
-	if currentWord != "" {
-		words = append(words, currentWord)
-	}
-	return words
-}
-
-func rebuildWithWhitespace(original string, transformedWords []string) string {
-	result := ""
-	wordIdx := 0
-	currentWord := ""
-
-	for _, ch := range original {
-		if ch == ' ' || ch == '\t' || ch == '\n' {
-			if currentWord != "" {
-				if wordIdx < len(transformedWords) {
-					result += transformedWords[wordIdx]
-					wordIdx++
-				} else {
-					result += currentWord
-				}
-				currentWord = ""
-			}
-			result += string(ch)
-		} else {
-			currentWord += string(ch)
-		}
-	}
-
-	if currentWord != "" {
-		if wordIdx < len(transformedWords) {
-			result += transformedWords[wordIdx]
-		} else {
-			result += currentWord
-		}
-	}
-
 	return result
 }
