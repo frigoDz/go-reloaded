@@ -35,7 +35,8 @@ func FixQuotes(str string) string {
 			}
 			clos = i
 			newline := foundNl(string(runes[open:clos]))
-			trimed := strings.TrimSpace(string(runes[open:clos]))
+			content := string(runes[open:clos])
+			trimed := strings.ReplaceAll(strings.TrimSpace(content), "\n", "")
 			slice += "'" + trimed + "'"
 			if newline {
 				slice += "\n"
