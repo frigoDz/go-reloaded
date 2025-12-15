@@ -8,24 +8,29 @@ import (
 )
 
 func main() {
+	if len(os.Args) != 3 {
+		fmt.Println("Error: Invalid number of argument")
+		return
+	}
 	if !(strings.HasSuffix(os.Args[2], ".txt")) {
-		fmt.Print("Incorrect file type")
+		fmt.Println("Error: Incorrect file type")
+		return
+	}
+	info, er := os.Stat(os.Args[1])
+	if er != nil {
+		fmt.Println("Error:", er)
+		return
+	}
+	if info.Size() > 1_000_000 {
+		fmt.Println("Error: file is too large")
 		return
 	}
 	databyte, err := os.ReadFile(os.Args[1])
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Error:", err)
 		return
 	}
 	dataedit := string(databyte)
-	if len(os.Args) < 3 {
-		fmt.Print("Not enough arguments")
-		return
-	}
-	if len(os.Args) > 3 {
-		fmt.Print("Too many arguments")
-		return
-	}
 	if len(dataedit) == 0 {
 		return
 	}
@@ -35,7 +40,7 @@ func main() {
 	dataedit = functions.FixQuotes(dataedit)
 	res, errr := os.Create(os.Args[2])
 	if errr != nil {
-		fmt.Print(errr)
+		fmt.Println("Error", errr)
 		return
 	}
 	res.WriteString(dataedit)
