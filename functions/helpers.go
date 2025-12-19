@@ -189,3 +189,13 @@ func rebuildWithWhitespace(original string, transformedWords []string) string {
 
 	return result
 }
+
+func CheckPun(s string) bool {
+	for _, ch := range s {
+		if ch == ' ' || ch == '\t' {
+			continue
+		}
+		return IsPunctuation(ch)
+	}
+	return false
+}

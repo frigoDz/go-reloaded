@@ -50,7 +50,7 @@ func FixQuotes(str string) string {
 				for clos < len(runes) && (runes[clos] == ' ' || runes[clos] == '\t') {
 					clos++
 				}
-			} else if !newline && clos < len(runes) && runes[clos] != ' ' && runes[clos] != '\n' {
+			} else if !newline && clos < len(runes) && runes[clos] != ' ' && runes[clos] != '\n' && !CheckPun(string(runes[clos:])) {
 				slice += " "
 			}
 			valid = false
